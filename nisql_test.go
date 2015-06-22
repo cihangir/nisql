@@ -49,7 +49,7 @@ func TestInit(t *testing.T) {
 VALUES
     (
         NULL,
-        "NULLABLE",
+        'NULLABLE',
         NULL,
         42,
         NULL,
