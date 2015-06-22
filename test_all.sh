@@ -2,7 +2,7 @@
 set -e
 
 echo "Testing against mysql"
-export NISQL_TEST_DSN=nisqltest/nisqltest/nisqltest
+export NISQL_TEST_DSN=nisqltest:nisqltest@/nisqltest
 export NISQL_TEST_DIALECT=mysql
 go test ./...
 
