@@ -53,7 +53,7 @@ VALUES
         NULL,
         42,
         NULL,
-        12.42,
+        12,
         NULL,
         true
     )`
@@ -86,15 +86,15 @@ VALUES
 	}
 
 	if n.Int64Val != int64(42) {
-		t.Fatalf("expected 42, got: ", n.Int64Val)
+		t.Fatalf("expected 42, got: %d", n.Int64Val)
 	}
 
 	if n.Int64NVal.Valid {
 		t.Fatalf("expected invalid, got valid for int64_n_val")
 	}
 
-	if n.Float64Val != float64(12.42) {
-		t.Fatalf("expected 12.42, got: ", n.Float64Val)
+	if n.Float64Val != float64(12) {
+		t.Fatalf("expected 12, got: %f", n.Float64Val)
 	}
 
 	if n.Float64NVal.Valid {
@@ -102,7 +102,7 @@ VALUES
 	}
 
 	if n.BoolVal != true {
-		t.Fatalf("expected true, got: ", n.BoolVal)
+		t.Fatalf("expected true, got: %t", n.BoolVal)
 	}
 
 	if n.BoolNVal.Valid {
