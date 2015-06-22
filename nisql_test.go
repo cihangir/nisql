@@ -32,7 +32,7 @@ func TestInit(t *testing.T) {
 
 	sql := `CREATE TABLE nullable (
     string_n_val VARCHAR (255) DEFAULT NULL,
-    string_val" VARCHAR (255) DEFAULT empty,
+    string_val VARCHAR (255) DEFAULT empty,
     int64_n_val BIGINT DEFAULT NULL,
     int64_val BIGINT DEFAULT 1,
     float64_n_val NUMERIC DEFAULT NULL,
