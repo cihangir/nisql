@@ -45,7 +45,7 @@ func TestInit(t *testing.T) {
 		t.Fatalf("err while creating table: %s", err.Error())
 	}
 
-	sql = `INSERT INTO "nullable"
+	sql = `INSERT INTO nullable
 VALUES
     (
         NULL,
@@ -63,7 +63,7 @@ VALUES
 	}
 
 	n := &nullable{}
-	err = db.QueryRow("SELECT * FROM \"nullable\"").
+	err = db.QueryRow("SELECT * FROM nullable").
 		Scan(&n.StringNVal,
 		&n.StringVal,
 		&n.Int64NVal,
