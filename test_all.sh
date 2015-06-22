@@ -13,5 +13,5 @@ go test ./...
 
 echo "Testing against sqlite"
 export NISQL_TEST_DSN=/tmp/nisqltest.bin
-export NISQL_TEST_DIALECT=sqlite
+export NISQL_TEST_DIALECT=sqlite3
 go test ./...
