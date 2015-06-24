@@ -1,8 +1,12 @@
 package nisql
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
+	"time"
+
+	"github.com/lib/pq"
 )
 
 var nullString = []byte("null")
@@ -90,4 +94,30 @@ func unmarshal(s sql.Scanner, b []byte) error {
 	}
 
 	return s.Scan(d)
+}
+
+type NullTime struct {
+	pq.NullTime
+}
+
+// MarshalJSON correctly serializes a NullTime to JSON
+func (n *NullTime) MarshalJSON() ([]byte, error) {
+	if !n.Valid {
+		return nullString, nil
+	}
+
+	return json.Marshal(n.Time)
+}
+
+// UnmarshalJSON turns *NullTime into a json.Unmarshaller.
+func (n *NullTime) UnmarshalJSON(b []byte) error {
+	if bytes.Equal(b, nullString) {
+		return n.Scan(nil)
+	}
+
+	var t time.Time
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+	return n.Scan(t)
 }

@@ -1,11 +1,6 @@
 #!/bin/sh
 set -e
 
-echo "Testing against mysql"
-export NISQL_TEST_DSN=nisqltest:nisqltest@/nisqltest
-export NISQL_TEST_DIALECT=mysql
-go test ./...
-
 echo "Testing against postgres"
 export NISQL_TEST_DSN="user=nisqltest password=nisqltest dbname=nisqltest sslmode=disable"
 export NISQL_TEST_DIALECT=postgres
