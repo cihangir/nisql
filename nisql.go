@@ -2,7 +2,10 @@ package nisql
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
+	"fmt"
+	"time"
 )
 
 var nullString = []byte("null")
@@ -90,4 +93,54 @@ func unmarshal(s sql.Scanner, b []byte) error {
 	}
 
 	return s.Scan(d)
+}
+
+type NullTime struct {
+	Time  time.Time
+	Valid bool
+}
+
+func (n *NullTime) Scan(value interface{}) error {
+	if value == nil {
+		n.Time, n.Valid = time.Time{}, false
+		return nil
+	}
+
+	switch v := value.(type) {
+	case time.Time:
+		n.Time, n.Valid = v, true
+		return nil
+	}
+
+	n.Valid = false
+	return fmt.Errorf("Can't convert %T to time.Time", value)
+}
+
+// Value implements the driver Valuer interface.
+func (nt NullTime) Value() (driver.Value, error) {
+	if !nt.Valid {
+		return nil, nil
+	}
+
+	return nt.Time, nil
+}
+
+// MarshalJSON correctly serializes a NullTime to JSON
+func (n *NullTime) MarshalJSON() ([]byte, error) {
+	if !n.Valid {
+		return nullString, nil
+	}
+
+	return json.Marshal(n.Time)
+}
+
+// UnmarshalJSON turns *NullTime into a json.Unmarshaller.
+func (n *NullTime) UnmarshalJSON(b []byte) error {
+	// scan for JSON timestamp
+	var t time.Time
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+
+	return n.Scan(t)
 }

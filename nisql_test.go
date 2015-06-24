@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"os"
 	"testing"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
@@ -21,6 +22,9 @@ type nullable struct {
 
 	BoolNVal NullBool
 	BoolVal  bool
+
+	TimeNVal NullTime
+	TimeVal  time.Time
 }
 
 func TestInit(t *testing.T) {
@@ -37,7 +41,9 @@ func TestInit(t *testing.T) {
     float64_n_val NUMERIC DEFAULT NULL,
     float64_val NUMERIC DEFAULT 1,
     bool_n_val BOOLEAN,
-    bool_val BOOLEAN
+    bool_val BOOLEAN NOT NULL,
+    time_n_val timestamp,
+    time_val timestamp NOT NULL
 )`
 
 	if _, err = db.Exec(sql); err != nil {
@@ -54,7 +60,9 @@ VALUES
         NULL,
         12,
         NULL,
-        true
+        true,
+        NULL,
+        NOW()
     )`
 
 	if _, err := db.Exec(sql); err != nil {
@@ -71,6 +79,8 @@ VALUES
 		&n.Float64Val,
 		&n.BoolNVal,
 		&n.BoolVal,
+		&n.TimeNVal,
+		&n.TimeVal,
 	)
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -106,5 +116,13 @@ VALUES
 
 	if n.BoolNVal.Valid {
 		t.Fatalf("expected invalid, got valid for float64_n_val")
+	}
+
+	if n.TimeNVal.Valid {
+		t.Fatalf("expected false, got: %t", n.TimeNVal)
+	}
+
+	if n.TimeVal.IsZero() {
+		t.Fatalf("expected valid, got invalid for TimeVal: %+v", n.TimeVal)
 	}
 }
