@@ -1,3 +1,4 @@
+// Package nisql provides nullable types for database operations
 package nisql
 
 import (
