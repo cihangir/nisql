@@ -120,7 +120,7 @@ VALUES
 	}
 
 	if n.BoolNVal.Valid {
-		t.Fatalf("expected invalid, got valid for float64_n_val")
+		t.Fatalf("expected invalid, got valid for bool_n_val")
 	}
 
 	if n.TimeNVal.Valid {
@@ -134,6 +134,8 @@ VALUES
 	if _, err := db.Exec("DELETE FROM nullable"); err != nil {
 		t.Fatalf("err while clearing nullable table: %s", err.Error())
 	}
+
+	testGetNonNil(t, n)
 }
 
 func dummy(now time.Time) *nullable {
@@ -155,6 +157,7 @@ func dummy(now time.Time) *nullable {
 		TimeVal:  now,
 	}
 }
+
 func TestMarshal(t *testing.T) {
 	now := time.Now().UTC()
 	nset := dummy(now)
@@ -233,6 +236,12 @@ func TestUnMarshal(t *testing.T) {
 	if !reflect.DeepEqual(nnonset, nnonset2) {
 		t.Fatalf("not same: \nn:%#v,\nn2:%#v", nnonset, nnonset2)
 	}
+
+	testGetNonNil(t, nset)
+	testGetNil(t, nnonset)
+
+	testGetNonNil(t, nset2)
+	testGetNil(t, nnonset2)
 }
 
 func TestMarshalNullTime(t *testing.T) {
@@ -253,4 +262,27 @@ func TestMarshalNullBool(t *testing.T) {
 
 func zeroDate() time.Time {
 	return time.Date(1, time.January, 1, 0, 0, 0, 0, time.FixedZone("", 0))
+}
+
+func testGetNil(t *testing.T, n *nullable) {
+	testF(t, "n.StringNVal.Get() == nil", n.StringNVal.Get() == nil)
+	testF(t, "n.Int64NVal.Get() == nil", n.Int64NVal.Get() == nil)
+	testF(t, "n.Float64NVal.Get() == nil", n.Float64NVal.Get() == nil)
+	testF(t, "n.BoolNVal.Get() == nil", n.BoolNVal.Get() == nil)
+	testF(t, "n.TimeNVal.Get() == nil", n.TimeNVal.Get() == nil)
+}
+
+func testGetNonNil(t *testing.T, n *nullable) {
+	testF(t, "n.StringNVal.Get() != nil", n.StringNVal.Get() != nil)
+	testF(t, "n.Int64NVal.Get() != nil", n.Int64NVal.Get() != nil)
+	testF(t, "n.Float64NVal.Get() != nil", n.Float64NVal.Get() != nil)
+	testF(t, "n.BoolNVal.Get() != nil", n.BoolNVal.Get() != nil)
+	testF(t, "n.TimeNVal.Get() != nil", n.TimeNVal.Get() != nil)
+}
+
+func testF(tb testing.TB, msg string, res bool) {
+	if !res {
+		fmt.Printf("exp: %s\n", msg)
+		tb.Fail()
+	}
 }
