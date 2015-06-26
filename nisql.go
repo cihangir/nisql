@@ -22,6 +22,10 @@ func String(s string) NullString {
 	}
 }
 
+//
+// String
+//
+
 // NullString is a type that can be null or a string
 type NullString struct {
 	sql.NullString
@@ -40,6 +44,19 @@ func (n *NullString) MarshalJSON() ([]byte, error) {
 func (n *NullString) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
+
+// Get returns nil or underlying value
+func (n *NullString) Get() *string {
+	if !n.Valid {
+		return nil
+	}
+
+	return &n.String
+}
+
+//
+// Float64
+//
 
 // Float64 creates a new valid NullFloat64
 func Float64(f float64) NullFloat64 {
@@ -70,6 +87,19 @@ func (n *NullFloat64) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
 
+// Get returns nil or underlying value
+func (n *NullFloat64) Get() *float64 {
+	if !n.Valid {
+		return nil
+	}
+
+	return &n.Float64
+}
+
+//
+// Int64
+//
+
 // Int64 creates a new valid NullInt64
 func Int64(i int64) NullInt64 {
 	return NullInt64{
@@ -98,6 +128,19 @@ func (n *NullInt64) MarshalJSON() ([]byte, error) {
 func (n *NullInt64) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
+
+// Get returns nil or underlying value
+func (n *NullInt64) Get() *int64 {
+	if !n.Valid {
+		return nil
+	}
+
+	return &n.Int64
+}
+
+//
+// Bool
+//
 
 // Bool creates a new valid NullBool
 func Bool(b bool) NullBool {
@@ -128,6 +171,15 @@ func (n *NullBool) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
 
+// Get returns nil or underlying value
+func (n *NullBool) Get() *bool {
+	if !n.Valid {
+		return nil
+	}
+
+	return &n.Bool
+}
+
 // Time creates a new valid NullTime
 func Time(t time.Time) NullTime {
 	return NullTime{
@@ -137,6 +189,10 @@ func Time(t time.Time) NullTime {
 		},
 	}
 }
+
+//
+// time.Time
+//
 
 // NullTime is a type that can be null or a time.Time
 type NullTime struct {
@@ -164,6 +220,15 @@ func (n *NullTime) UnmarshalJSON(b []byte) error {
 	}
 
 	return n.Scan(t)
+}
+
+// Get returns nil or underlying value
+func (n *NullTime) Get() *time.Time {
+	if !n.Valid {
+		return nil
+	}
+
+	return &n.Time
 }
 
 func unmarshal(s sql.Scanner, b []byte) error {
