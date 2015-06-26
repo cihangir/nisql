@@ -135,7 +135,7 @@ VALUES
 		t.Fatalf("err while clearing nullable table: %s", err.Error())
 	}
 
-	testGetNonNil(t, n)
+	testGetNil(t, n)
 }
 
 func dummy(now time.Time) *nullable {
