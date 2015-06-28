@@ -1,4 +1,5 @@
-// Package nisql provides nullable types for database operations
+// Package nisql provides nullable types for database operations with proper
+// json marshalling and unmarshalling
 package nisql
 
 import (
@@ -12,7 +13,11 @@ import (
 
 var nullString = []byte("null")
 
-// String creates a new valid NullString
+//
+// String
+//
+
+// String creates a valid NullString
 func String(s string) NullString {
 	return NullString{
 		sql.NullString{
@@ -22,16 +27,12 @@ func String(s string) NullString {
 	}
 }
 
-//
-// String
-//
-
 // NullString is a type that can be null or a string
 type NullString struct {
 	sql.NullString
 }
 
-// MarshalJSON correctly serializes a NullString to JSON
+// MarshalJSON implements the json.Marshaler interface.
 func (n *NullString) MarshalJSON() ([]byte, error) {
 	if !n.Valid {
 		return nullString, nil
@@ -40,12 +41,12 @@ func (n *NullString) MarshalJSON() ([]byte, error) {
 	return json.Marshal(n.String)
 }
 
-// UnmarshalJSON turns *NullString into a json.Unmarshaller.
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *NullString) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
 
-// Get returns nil or underlying value
+// Get returns nil or underlying string value
 func (n *NullString) Get() *string {
 	if !n.Valid {
 		return nil
@@ -58,7 +59,7 @@ func (n *NullString) Get() *string {
 // Float64
 //
 
-// Float64 creates a new valid NullFloat64
+// Float64 creates a valid NullFloat64
 func Float64(f float64) NullFloat64 {
 	return NullFloat64{
 		sql.NullFloat64{
@@ -73,7 +74,7 @@ type NullFloat64 struct {
 	sql.NullFloat64
 }
 
-// MarshalJSON correctly serializes a NullFloat64 to JSON
+// MarshalJSON implements the json.Marshaler interface.
 func (n *NullFloat64) MarshalJSON() ([]byte, error) {
 	if !n.Valid {
 		return nullString, nil
@@ -82,12 +83,12 @@ func (n *NullFloat64) MarshalJSON() ([]byte, error) {
 	return json.Marshal(n.Float64)
 }
 
-// UnmarshalJSON turns *NullFloat64 into a json.Unmarshaller.
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *NullFloat64) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
 
-// Get returns nil or underlying value
+// Get returns nil or underlying float64 value
 func (n *NullFloat64) Get() *float64 {
 	if !n.Valid {
 		return nil
@@ -100,7 +101,7 @@ func (n *NullFloat64) Get() *float64 {
 // Int64
 //
 
-// Int64 creates a new valid NullInt64
+// Int64 creates a valid NullInt64
 func Int64(i int64) NullInt64 {
 	return NullInt64{
 		sql.NullInt64{
@@ -115,7 +116,7 @@ type NullInt64 struct {
 	sql.NullInt64
 }
 
-// MarshalJSON correctly serializes a NullInt64 to JSON
+// MarshalJSON implements the json.Marshaler interface.
 func (n *NullInt64) MarshalJSON() ([]byte, error) {
 	if !n.Valid {
 		return nullString, nil
@@ -124,12 +125,12 @@ func (n *NullInt64) MarshalJSON() ([]byte, error) {
 	return json.Marshal(n.Int64)
 }
 
-// UnmarshalJSON turns *NullInt64 into a json.Unmarshaller.
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *NullInt64) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
 
-// Get returns nil or underlying value
+// Get returns nil or underlying int64 value
 func (n *NullInt64) Get() *int64 {
 	if !n.Valid {
 		return nil
@@ -142,7 +143,7 @@ func (n *NullInt64) Get() *int64 {
 // Bool
 //
 
-// Bool creates a new valid NullBool
+// Bool creates a valid NullBool
 func Bool(b bool) NullBool {
 	return NullBool{
 		sql.NullBool{
@@ -157,7 +158,7 @@ type NullBool struct {
 	sql.NullBool
 }
 
-// MarshalJSON correctly serializes a NullBool to JSON
+// MarshalJSON implements the json.Marshaler interface.
 func (n *NullBool) MarshalJSON() ([]byte, error) {
 	if !n.Valid {
 		return nullString, nil
@@ -166,12 +167,12 @@ func (n *NullBool) MarshalJSON() ([]byte, error) {
 	return json.Marshal(n.Bool)
 }
 
-// UnmarshalJSON turns *NullBool into a json.Unmarshaller.
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *NullBool) UnmarshalJSON(b []byte) error {
 	return unmarshal(n, b)
 }
 
-// Get returns nil or underlying value
+// Get returns nil or underlying bool value
 func (n *NullBool) Get() *bool {
 	if !n.Valid {
 		return nil
@@ -180,7 +181,7 @@ func (n *NullBool) Get() *bool {
 	return &n.Bool
 }
 
-// Time creates a new valid NullTime
+// Time creates a valid NullTime
 func Time(t time.Time) NullTime {
 	return NullTime{
 		pq.NullTime{
@@ -199,7 +200,7 @@ type NullTime struct {
 	pq.NullTime
 }
 
-// MarshalJSON correctly serializes a NullTime to JSON
+// MarshalJSON implements the json.Marshaler interface.
 func (n *NullTime) MarshalJSON() ([]byte, error) {
 	if !n.Valid {
 		return nullString, nil
@@ -208,7 +209,7 @@ func (n *NullTime) MarshalJSON() ([]byte, error) {
 	return json.Marshal(n.Time)
 }
 
-// UnmarshalJSON turns *NullTime into a json.Unmarshaller.
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *NullTime) UnmarshalJSON(b []byte) error {
 	if bytes.Equal(b, nullString) {
 		return n.Scan(nil)
@@ -222,7 +223,7 @@ func (n *NullTime) UnmarshalJSON(b []byte) error {
 	return n.Scan(t)
 }
 
-// Get returns nil or underlying value
+// Get returns nil or underlying time.Time value
 func (n *NullTime) Get() *time.Time {
 	if !n.Valid {
 		return nil
